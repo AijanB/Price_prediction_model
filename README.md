@@ -47,26 +47,26 @@ The target variable is the price of the property.
 ## 📈 Model Performance Plots
 
 ### 🔵 CatBoost Accuracy Plot  
-![CatBoost Accuracy](Prediction%20Accuracy%20Plot,%20Catboost.png)
+![CatBoost Accuracy](images/Prediction%20Accuracy%20Plot,%20Catboost.png)
 
 ### 🟢 Decision Tree Accuracy Plot  
-![DecisionTree Accuracy](Prediction%20Accuracy%20Plot%20Desicion%20tree.png)
+![DecisionTree Accuracy](images/Prediction%20Accuracy%20Plot%20Desicion%20tree.png)
 
 ### 🔴 Linear Model Accuracy Plot  
-![Linear Accuracy](Prediction%20Accuracy%20Plot%20Linear.png)
+![Linear Accuracy](images/Prediction%20Accuracy%20Plot%20Linear.png)
 
 ---
 
 ## 🔍 Feature Importance
 
 ### 📌 CatBoost Feature Importance  
-![CatBoost FI](CatBoost%20Feature%20importance%20.png)
+![CatBoost FI](images/CatBoost%20Feature%20importance%20.png)
 
 ### 🌳 Decision Tree Feature Importance  
-![DecisionTree FI](DecisionTree%20feature%20importance.png)
+![DecisionTree FI](images/DecisionTree%20feature%20importance.png)
 
 ### 📐 Linear Model (ElasticNet) Feature Importance  
-![Linear FI](Feature%20importance%20Linear%20model.png)
+![Linear FI](images/Feature%20importance%20Linear%20model.png)
 
 ---
 
@@ -74,7 +74,7 @@ The target variable is the price of the property.
 
 Shows how numeric features relate to each other and to the target (`usd_price`):
 
-![Correlation Matrix](correlation%20matrix.png)
+![Correlation Matrix](images/correlation%20matrix.png)
 
 ---
 
