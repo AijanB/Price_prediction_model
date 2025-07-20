@@ -67,11 +67,11 @@ def predict_price(lat, lon, heating, condition, series, building_type, doc_quali
         return f"❌ Error: {str(e)}"
 
 # === Interface ===
-heating_options = ['central', 'autonomous', 'none']
-condition_options = ['good', 'needs repair', 'unknown']
-series_options = ['old', 'new', 'elite']
+heating_options = ['central', 'gas', 'unknown', 'autonomous', 'electric', 'mixed', 'solid_fuel', 'no_heating']
+condition_options = ['shell_condition', 'euro', 'unknown', 'good, 'average', 'not_finished']
+series_options = ['Elite', 'Soviet', 'Individual', 'Economy', 'Stalinka', 'Penthouse']
 building_type_options = ['brick', 'panel', 'monolith']
-doc_quality_options = ['full', 'partial', 'no_docs']
+doc_quality_options = ['full', 'no', 'share', 'sales_contract']
 
 interface = gr.Interface(
     fn=predict_price,
