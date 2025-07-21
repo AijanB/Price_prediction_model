@@ -16,7 +16,8 @@ class LogToPriceWrapper(BaseEstimator, RegressorMixin):
 
     def predict(self, X):
         return np.expm1(self.model.predict(X))
-
+        
+# === Feature engineering function ===
 def create_other_features(df):
     X = df.copy()
     X['log_total_area'] = np.log1p(X['total_area'])
@@ -35,15 +36,6 @@ scaler = joblib.load("scaler_latlon.pkl")
 clusterer = joblib.load("hdbscan_model..pkl")
 feature_engineer = joblib.load("feature_engineer.pkl")
 
-# === Feature engineering function ===
-def create_other_features(df):
-    X = df.copy()
-    X['log_total_area'] = np.log1p(X['total_area'])
-    X['area_per_room'] = X['total_area'] / X['rooms']
-    X.loc[X['rooms'] == 0, 'area_per_room'] = 0
-    for col in ['condition']:
-        X[f'is_{col}_unknown'] = (X[col] == 'unknown').astype(int)
-    return X
 
 # === Prediction function ===
 def predict_price(lat, lon, heating, condition, series, building_type, doc_quality, rooms, total_area, floor, ceiling_height, build_year):
