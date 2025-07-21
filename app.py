@@ -19,7 +19,7 @@ def create_other_features(df):
 # ======== Plotting Function ========
 def make_plot(cat, dt, lr):
     fig, ax = plt.subplots()
-    ax.bar(["CatBoost", "Decision Tree", "Linear"], [cat, dt, lr], color=["#FDB813", "#00BFC4", "#D55E00"])
+    ax.bar(["CatBoost", "Decision Tree", "Linear"], [cat, dt, lr], color=["#AEC6CF", "#C5E384", "#FFB347"])
     ax.set_ylabel("Predicted Price (USD)")
     ax.set_title("Model Comparison")
     ax.grid(True, linestyle="--", alpha=0.5)
