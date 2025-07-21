@@ -30,7 +30,7 @@ The target variable is the price of the property.
 
 Shows how numeric features relate to each other and to the target (`usd_price`):
 
-![Correlation Matrix](images/correlation%20matrix.png)
+![Correlation Matrix](https://github.com/AijanB/Price_prediction_model/blob/main/images/correlation%20matrix.png?raw=true)
 
 ---
 
