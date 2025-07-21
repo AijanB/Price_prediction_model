@@ -4,13 +4,25 @@ import pandas as pd
 import numpy as np
 import joblib
 from catboost import CatBoostRegressor
+from sklearn.base import BaseEstimator, RegressorMixin
+
+class LogToPriceWrapper(BaseEstimator, RegressorMixin):
+    def __init__(self, model):
+        self.model = model
+
+    def fit(self, X, y):
+        self.model.fit(X, np.log1p(y))
+        return self
+
+    def predict(self, X):
+        return np.expm1(self.model.predict(X))
 
 # === Load models and preprocessors ===
 catboost_model = joblib.load("final_catboost_model.pkl")
-dt_model = joblib.load("decision_tree_pipeline (1).pkl")
-lr_model = joblib.load("linear_pipeline (3).pkl")
-scaler = joblib.load("scaler_latlon (2).pkl")
-clusterer = joblib.load("hdbscan_model (1).pkl")
+dt_model = joblib.load("decision_tree_pipeline.pkl")
+lr_model = joblib.load("linear_pipeline..pkl")
+scaler = joblib.load("scaler_latlon.pkl")
+clusterer = joblib.load("hdbscan_model..pkl")
 feature_engineer = joblib.load("feature_engineer.pkl")
 
 # === Feature engineering function ===
