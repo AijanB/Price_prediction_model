@@ -82,7 +82,7 @@ def predict_price(lat, lon, heating, condition, series, building_type, doc_quali
 
 # === Interface ===
 heating_options = ['central', 'gas', 'unknown', 'autonomous', 'electric', 'mixed', 'solid_fuel', 'no_heating']
-condition_options = ['shell_condition', 'euro', 'unknown', 'good, 'average', 'not_finished']
+condition_options = ['shell_condition', 'euro', 'unknown', 'good', 'average', 'not_finished']
 series_options = ['Elite', 'Soviet', 'Individual', 'Economy', 'Stalinka', 'Penthouse']
 building_type_options = ['brick', 'panel', 'monolith']
 doc_quality_options = ['full', 'no', 'share', 'sales_contract']
