@@ -78,7 +78,8 @@ def predict_price(lat, lon, heating, condition, series, building_type, doc_quali
             "Linear Regression ($)": f"${lr_pred:,.0f}"
         }
     except Exception as e:
-        return f"❌ Error: {str(e)}"
+        import traceback
+        return f"❌ Error: {str(e)}\n\nTraceback:\n{traceback.format_exc()}"
 
 # === Interface ===
 heating_options = ['central', 'gas', 'unknown', 'autonomous', 'electric', 'mixed', 'solid_fuel', 'no_heating']
