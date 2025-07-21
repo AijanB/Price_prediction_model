@@ -1,6 +1,6 @@
-# 🏠 Real Estate Price Prediction
+# 🏘️ Real Estate Price Prediction — Bishkek, Kyrgyzstan 🇰🇬
 
-This project predicts real estate prices using multiple regression models, including CatBoost, Decision Tree, and Linear (ElasticNet) models. The pipeline involves preprocessing, feature engineering, model evaluation, and interpretability via visualizations.
+This project is a machine learning pipeline for predicting real estate prices in Bishkek based on property and location features. It includes data cleaning, feature engineering, clustering, and training of multiple regression models, including CatBoost, Decision Tree, and Linear Regression.
 
 ---
 
