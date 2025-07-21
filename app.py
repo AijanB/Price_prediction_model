@@ -17,6 +17,16 @@ class LogToPriceWrapper(BaseEstimator, RegressorMixin):
     def predict(self, X):
         return np.expm1(self.model.predict(X))
 
+def create_other_features(df):
+    X = df.copy()
+    X['log_total_area'] = np.log1p(X['total_area'])
+    X['area_per_room'] = X['total_area'] / X['rooms']
+    X.loc[X['rooms'] == 0, 'area_per_room'] = 0
+    for col in ['condition']:
+        X[f'is_{col}_unknown'] = (X[col] == 'unknown').astype(int)
+    return X
+
+
 # === Load models and preprocessors ===
 catboost_model = joblib.load("final_catboost_model.pkl")
 dt_model = joblib.load("decision_tree_pipeline.pkl")
