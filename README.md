@@ -94,3 +94,8 @@ Shows how numeric features relate to each other and to the target (`usd_price`):
 - **Linear Model** provided a solid baseline with clear interpretability.
 
 ---
+
+## 🔗 Try It on Hugging Face
+
+You can interact with the live model directly in your browser via [Hugging Face Spaces](https://huggingface.co/spaces/AijanB/Price_prediction).
+
