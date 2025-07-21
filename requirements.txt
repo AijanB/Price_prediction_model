@@ -1,6 +1,6 @@
 pandas
 numpy
-scikit-learn
+scikit-learn==
 catboost
 hdbscan
 gradio
