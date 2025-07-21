@@ -26,6 +26,14 @@ The target variable is the price of the property.
 
 ---
 
+## 📌 Correlation Matrix
+
+Shows how numeric features relate to each other and to the target (`usd_price`):
+
+![Correlation Matrix](images/correlation%20matrix.png)
+
+---
+
 ## 🧠 Models
 
 ### 1. CatBoost Regressor
@@ -70,13 +78,6 @@ The target variable is the price of the property.
 
 ---
 
-## 📌 Correlation Matrix
-
-Shows how numeric features relate to each other and to the target (`usd_price`):
-
-![Correlation Matrix](images/correlation%20matrix.png)
-
----
 
 ## 🧪 Evaluation Metrics
 
