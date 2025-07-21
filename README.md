@@ -55,26 +55,26 @@ Shows how numeric features relate to each other and to the target (`usd_price`):
 ## 📈 Model Performance Plots
 
 ### 🔵 CatBoost Accuracy Plot  
-![CatBoost Accuracy](images/Prediction%20Accuracy%20Plot,%20Catboost.png)
+![Prediction Accuracy Plot: CatBoost](https://github.com/AijanB/Price_prediction_model/blob/main/images/Prediction%20Accuracy%20Plot%2C%20Catboost.png?raw=true)
 
 ### 🟢 Decision Tree Accuracy Plot  
-![DecisionTree Accuracy](images/Prediction%20Accuracy%20Plot%20Desicion%20tree.png)
+![Prediction Accuracy Plot: Decision Tree](https://github.com/AijanB/Price_prediction_model/blob/main/images/Prediction%20Accuracy%20Plot%20Desicion%20tree.png?raw=true)
 
 ### 🔴 Linear Model Accuracy Plot  
-![Linear Accuracy](images/Prediction%20Accuracy%20Plot%20Linear.png)
+![Prediction Accuracy Plot: Linear](https://github.com/AijanB/Price_prediction_model/blob/main/images/Prediction%20Accuracy%20Plot%20Linear.png?raw=true)
 
 ---
 
 ## 🔍 Feature Importance
 
 ### 📌 CatBoost Feature Importance  
-![CatBoost FI](images/CatBoost%20Feature%20importance%20.png)
+![CatBoost Feature Importance](https://github.com/AijanB/Price_prediction_model/blob/main/images/CatBoost%20Feature%20importance%20.png?raw=true)
 
 ### 🌳 Decision Tree Feature Importance  
-![DecisionTree FI](images/DecisionTree%20feature%20importance.png)
+![Decision Tree Feature Importance](https://github.com/AijanB/Price_prediction_model/blob/main/images/DecisionTree%20feature%20importance.png?raw=true)
 
 ### 📐 Linear Model (ElasticNet) Feature Importance  
-![Linear FI](images/Feature%20importance%20Linear%20model.png)
+![Linear Model Feature Importance](https://github.com/AijanB/Price_prediction_model/blob/main/images/Feature%20importance%20Linear%20model.png?raw=true)
 
 ---
 
