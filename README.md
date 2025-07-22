@@ -20,7 +20,7 @@ The target variable is the price of the property.
 - Removed missing or invalid values
 - Log-transformed target variable for modeling
 - Created additional features:
-  - `log_total_area` = log(1 + `total_area`)
+  - `log_total_area` = log(`total_area`)
   - `area_per_room` = `total_area` / `rooms`
   - `is_condition_unknown` = flag for unknown conditions
 
