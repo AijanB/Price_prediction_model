@@ -1,7 +1,7 @@
 pandas
 numpy
-scikit-learn==1.7.1
+scikit-learn==1.6.1
 catboost
 hdbscan
-gradio
+gradio==4.44.1
 joblib
