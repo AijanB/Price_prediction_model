@@ -1,105 +1,123 @@
-# 🏠 Real Estate Price Estimator (Bishkek, Kyrgyzstan 🇰🇬)
+# 🏘️ Real Estate Price Prediction — Bishkek, Kyrgyzstan 🇰🇬
 
-This app predicts apartment prices in Bishkek using three different machine learning models: **CatBoost**, **Decision Tree**, and **Linear Regression**.
-
-### 🔮 Features
-- Predict apartment price based on features like:
-  - Location (latitude, longitude)
-  - Total area, floor, ceiling height, build year
-  - Room count, condition, heating, building type
-  - Document quality and series type
-- Provides **±2σ** and **95% confidence intervals** for each prediction
-- Interactive UI built with **Gradio**
-- Visual bar chart comparison of all model predictions
+This project is a machine learning pipeline for predicting real estate prices in Bishkek based on property and location features. It includes data cleaning, feature engineering, clustering, and training of multiple regression models, including CatBoost, Decision Tree, and Linear Regression.
 
 ---
 
-### 🚀 How to Run
+## 📊 Dataset Overview
 
-```bash
-pip install -r requirements.txt
-python app.py
-```
+The dataset contains real estate listings with the following types of features:
 
-Runs at: `http://localhost:7860`
+- **Categorical**: `heating`, `condition`, `doc_quality`, `series`, `building_type`
+- **Numerical**: `lat`, `lon`, `rooms`, `total_area`, `floor`, `ceiling_height`, `build_year`, `geo_cluster`, `log_total_area`, `area_per_room`, `is_condition_unknown`
 
----
-
-### 📐 Project Architecture
-
-```mermaid
-flowchart TD
-    A[User Input via Gradio UI] --> B[Feature Engineering]
-    B --> C[Geo Clustering with HDBSCAN]
-    C --> D[Preprocessing (Encoding, Scaling)]
-    D --> E[Log-Transformed Target]
-    E --> F[Trained Models]
-    F --> G[Prediction + Confidence Intervals]
-    G --> H[Gradio Output: Text & Plot]
-```
-
-#### 🔄 Steps:
-1. **User Input via Gradio**  
-   Users input property features via a friendly web interface.
-
-2. **Feature Engineering**  
-   Derived features like `log_total_area`, `area_per_room`, and `is_condition_unknown` are computed.
-
-3. **Clustering**  
-   Geographic coordinates are scaled and passed to a trained **HDBSCAN** model to assign each input to a location-based cluster.
-
-4. **Preprocessing**  
-   - Categorical: OrdinalEncoder  
-   - Numerical: StandardScaler  
-   Combined using a `ColumnTransformer`.
-
-5. **Model Prediction (log scale)**  
-   - Target variable is log-transformed during training.
-   - Predictions are inverse-transformed with `np.expm1`.
-
-6. **Prediction Output**  
-   Each model returns:
-   - Point estimate
-   - ±2 standard deviations interval
-   - 95% confidence interval using the **k-nearest neighbors** approach
+The target variable is the price of the property.
 
 ---
 
-### 📏 Confidence Interval Estimation
+## 🧹 Data Cleaning & Feature Engineering
 
-To evaluate prediction **uncertainty**, we use a **K-Nearest Neighbors (KNN) in latent space** method:
-
-1. For a new input sample, compute its distance to all training points (after preprocessing).
-2. Select the `k=20` nearest neighbors based on Euclidean distance.
-3. Use their log prices to compute:
-   - **±2σ interval**:  
-     \[ [\mu - 2\sigma, \mu + 2\sigma] \]
-   - **95% Confidence Interval**:  
-     \[ [\mu - 2\sigma/\sqrt{k}, \mu + 2\sigma/\sqrt{k}] \]
-4. Intervals are then inverse-transformed from log scale using `np.expm1`.
-
-This approach provides **uncertainty-aware predictions** without requiring probabilistic models.
+- Removed missing or invalid values
+- Log-transformed target variable for modeling
+- Created additional features:
+  - `log_total_area` = log(1 + `total_area`)
+  - `area_per_room` = `total_area` / `rooms`
+  - `is_condition_unknown` = flag for unknown conditions
 
 ---
 
-### 📊 Output Example
+## 📌 Correlation Matrix
 
-- **CatBoost**:  
-  `$84,600  
-  ±2σ: $65,100 — $104,900  
-  95% CI: $74,200 — $94,300`
+Shows how numeric features relate to each other and to the target (`usd_price`):
 
-- **Comparison Plot**:  
-  Bar chart comparing price predictions across models.
+![Correlation Matrix](https://github.com/AijanB/Price_prediction_model/blob/main/images/correlation%20matrix.png?raw=true)
 
 ---
 
-### 🧠 Models
-- `CatBoostRegressor` (native)
-- `DecisionTreeRegressor` (sklearn pipeline)
-- `LinearRegression` (sklearn pipeline)
+## 🧠 Models
+
+### 1. CatBoost Regressor
+- Handles categorical features natively
+- Tuned hyperparameters with Optuna
+- Wrapped with `TransformedTargetRegressor` for log-scaling
+
+### 2. Decision Tree Regressor
+- Used `OrdinalEncoder` for categorical features
+- Trained on full numerical + encoded categorical dataset
+
+### 3. Linear Model (ElasticNet)
+- Pipeline with `OneHotEncoder`, `StandardScaler`, `PolynomialFeatures`
+- Wrapped in custom class to handle log target
+- Cross-validated with `mean_absolute_percentage_error` (MAPE)
 
 ---
 
-### 🧰 Tech Stack
-- Python, Gradio, CatBoost, scikit-learn, HDBSCAN, Matplotlib
+## 📈 Model Performance Plots
+
+### 🔵 CatBoost Accuracy Plot  
+![Prediction Accuracy Plot: CatBoost](https://github.com/AijanB/Price_prediction_model/blob/main/images/Prediction%20Accuracy%20Plot%2C%20Catboost.png?raw=true)
+
+### 🟢 Decision Tree Accuracy Plot  
+![Prediction Accuracy Plot: Decision Tree](https://github.com/AijanB/Price_prediction_model/blob/main/images/Prediction%20Accuracy%20Plot%20Desicion%20tree.png?raw=true)
+
+### 🔴 Linear Model Accuracy Plot  
+![Prediction Accuracy Plot: Linear](https://github.com/AijanB/Price_prediction_model/blob/main/images/Prediction%20Accuracy%20Plot%20Linear.png?raw=true)
+
+---
+
+## 🔍 Feature Importance
+
+### 📌 CatBoost Feature Importance  
+![CatBoost Feature Importance](https://github.com/AijanB/Price_prediction_model/blob/main/images/CatBoost%20Feature%20importance%20.png?raw=true)
+
+### 🌳 Decision Tree Feature Importance  
+![Decision Tree Feature Importance](https://github.com/AijanB/Price_prediction_model/blob/main/images/DecisionTree%20feature%20importance.png?raw=true)
+
+### 📐 Linear Model (ElasticNet) Feature Importance  
+![Linear Model Feature Importance](https://github.com/AijanB/Price_prediction_model/blob/main/images/Feature%20importance%20Linear%20model.png?raw=true)
+
+---
+
+## 🧪 Evaluation Metrics
+
+- Used R² Score and MAPE
+- Visualized Actual vs Predicted Prices with a 45° reference line
+- CatBoost shows highest predictive power (R² ≈ 1.00)
+
+---
+
+## 🔧 Project Architecture
+
+The structure of the application is modular and includes:
+
+- **app.py** — main script for model prediction and Gradio interface
+- **Model files** (`.pkl`) — pre-trained pipelines for CatBoost, Decision Tree, and Linear Regression
+- **Feature Engineering** — functions for clustering, geo-scaling, and domain-specific transformations
+- **Interactive UI** — built using Gradio with a comparison plot and three prediction models
+- **Deployment** — via Hugging Face Spaces
+
+---
+
+## 📐 Confidence Intervals
+
+To enhance model reliability, we added **prediction uncertainty estimation** using neighborhood analysis:
+
+- For a given input, we calculate distances to the K nearest training samples (in preprocessed feature space).
+- From these neighbors' log-prices, we compute:
+  - **±2σ Interval**: based on population variance of neighbors.
+  - **95% Confidence Interval**: tighter range based on standard error (σ / √K).
+- This method applies to all three models and is especially helpful for assessing prediction stability.
+
+---
+
+## 🚀 Conclusion
+
+- **CatBoost** performed the best due to native handling of categorical features and advanced boosting logic.
+- **Decision Tree** captured non-linear patterns but showed overfitting tendencies.
+- **Linear Model** provided a solid baseline with clear interpretability.
+
+---
+
+## 🔗 Try It on Hugging Face
+
+You can interact with the live model directly in your browser via [Hugging Face Spaces](https://huggingface.co/spaces/AijanB/Price_prediction).
