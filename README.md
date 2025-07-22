@@ -1,4 +1,4 @@
-# 🏠 Real Estate Price Estimator (Bishkek)
+# 🏠 Real Estate Price Estimator (Bishkek, Kyrgyzstan 🇰🇬)
 
 This app predicts apartment prices in Bishkek using three different machine learning models: **CatBoost**, **Decision Tree**, and **Linear Regression**.
 
