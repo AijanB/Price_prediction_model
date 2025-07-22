@@ -45,7 +45,6 @@ def get_confidence_interval_log_model_catboost(x_raw_df, X_train, y_train_log, m
     y_neighbors_log = y_train_log.iloc[nearest_idxs].values
     pool = Pool(x_raw_df, cat_features=cat_features)
     y_pred_log = model.predict(pool)[0]
-    mean_log = y_neighbors_log.mean()
     std_log = y_neighbors_log.std()
     interval_pred_log = (y_pred_log - 2 * std_log, y_pred_log + 2 * std_log)
     interval_conf_log = (y_pred_log - 2 * std_log / np.sqrt(k), y_pred_log + 2 * std_log / np.sqrt(k))
@@ -61,20 +60,15 @@ def get_confidence_interval_log_model_sklearn(x_raw, X_train, y_train_log, model
     dists = distance.cdist(X_vec, x_vec).flatten()
     nearest_idxs = np.argsort(dists)[:k]
     y_neighbors_log = y_train_log.iloc[nearest_idxs].values
-
     y_pred_log = model.predict(x_raw)[0]
-
     std_log = y_neighbors_log.std()
-
     interval_pred_log = (y_pred_log - 2 * std_log, y_pred_log + 2 * std_log)
     interval_conf_log = (y_pred_log - 2 * std_log / np.sqrt(k), y_pred_log + 2 * std_log / np.sqrt(k))
-
     return {
         "prediction": np.expm1(y_pred_log),
         "interval_2sigma": tuple(np.expm1(interval_pred_log)),
         "interval_confidence": tuple(np.expm1(interval_conf_log))
     }
-
 
 def make_plot(cat, dt, lr):
     fig, ax = plt.subplots()
@@ -84,40 +78,17 @@ def make_plot(cat, dt, lr):
     ax.grid(True, linestyle="--", alpha=0.5)
     return fig
 
-def predict_price(lat, lon, heating, condition, series, building_type, doc_quality, rooms, total_area, floor, ceiling_height, build_year):
-    try:
-        df = pd.DataFrame({
-            "lat": [lat],
-            "lon": [lon],
-            "heating": [heating],
-            "condition": [condition],
-            "series": [series],
-            "building_type": [building_type],
-            "doc_quality": [doc_quality],
-            "rooms": [rooms],
-            "total_area": [total_area],
-            "floor": [floor],
-            "ceiling_height": [ceiling_height],
-            "build_year": [build_year]
-        })
-
-        coords_scaled = scaler.transform(df[['lat', 'lon']])
-        df["geo_cluster"] = approximate_predict(clusterer, coords_scaled)[0]
-        df = create_other_features(df)
-
-        cat_result = get_confidence_interval_log_model_catboost(df, X_train, y_train_log, catboost_model, categorical)
-        dt_result = get_confidence_interval_log_model_sklearn(df, X_train, y_train_log, dt_model, preprocessor)
-        lr_result = get_confidence_interval_log_model_sklearn(df, X_train, y_train_log, lr_model, preprocessor)
-
-        cat_text = f"${round(cat_result['prediction']):,}\n±2σ: ${round(cat_result['interval_2sigma'][0]):,} — ${round(cat_result['interval_2sigma'][1]):,}\n95% CI: ${round(cat_result['interval_confidence'][0]):,} — ${round(cat_result['interval_confidence'][1]):,}"
-        dt_text = f"${round(dt_result['prediction']):,}\n±2σ: ${round(dt_result['interval_2sigma'][0]):,} — ${round(dt_result['interval_2sigma'][1]):,}\n95% CI: ${round(dt_result['interval_confidence'][0]):,} — ${round(dt_result['interval_confidence'][1]):,}"
-        lr_text = f"${round(lr_result['prediction']):,}\n±2σ: ${round(lr_result['interval_2sigma'][0]):,} — ${round(lr_result['interval_2sigma'][1]):,}\n95% CI: ${round(lr_result['interval_confidence'][0]):,} — ${round(lr_result['interval_confidence'][1]):,}"
-
-        fig = make_plot(cat_result['prediction'], dt_result['prediction'], lr_result['prediction'])
-        return cat_text, dt_text, lr_text, fig
-    except Exception as e:
-        import traceback
-        return traceback.format_exc(), "❌", "❌", None
+def format_result(title, pred, sigma, conf):
+    return f"""
+<div style='font-family: Segoe UI, sans-serif; background:#FFF8E7; padding:16px; border-radius:12px; margin-bottom:12px;'>
+  <h3 style='font-size:20px; margin:0 0 6px 0;'>{title}</h3>
+  <div style='font-size:28px; font-weight:bold; color:#1F7A8C;'>${round(pred):,}</div>
+  <div style='font-size:14px;'>
+    <strong>±2σ:</strong> ${round(sigma[0]):,} — ${round(sigma[1]):,}<br>
+    <strong>95% CI:</strong> ${round(conf[0]):,} — ${round(conf[1]):,}
+  </div>
+</div>
+"""
 
 # Options
 heating_options = ['central', 'gas', 'unknown', 'autonomous', 'electric', 'mixed', 'solid_fuel', 'no_heating']
@@ -126,34 +97,25 @@ series_options = ['Elite', 'Soviet', 'Individual', 'Economy', 'Stalinka', 'Penth
 building_type_options = ['brick', 'panel', 'monolith']
 doc_quality_options = ['full', 'no', 'share', 'sales_contract']
 
-# Interface
 with gr.Blocks(css="""
-.gradio-container {
-    background: linear-gradient(to bottom right, #f9f9fc, #eaf2f8);
-    font-family: 'Segoe UI', sans-serif;
-    color: #2c2c2c;
-}
-.gr-button {
-    background-color: #d0dce8 !important;
-    color: #1f2a36 !important;
-    border: 1px solid #a6b3c5 !important;
-    box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
-    font-weight: bold;
-}
-.gr-input, .gr-textbox, .gr-slider, .gr-dropdown {
-    border: 1px solid #c5cdd6;
-    border-radius: 8px;
-    padding: 8px;
-    background-color: #ffffff;
-    color: #1f2a36;
-}
-.gr-output {
-    font-weight: bold;
-    color: #1f2a36;
-}
+    h1, h2, h3, h4 { font-family: 'Segoe UI', sans-serif; }
+    .gr-textbox label, .gr-dropdown label, .gr-slider label {
+        color: #444;
+        font-weight: 500;
+    }
+    .gr-button {
+        background-color: #1F7A8C;
+        color: white;
+        font-weight: bold;
+    }
 """) as demo:
-    gr.Markdown("# 🏠 Real Estate Price Estimator (Bishkek)")
-    gr.Markdown("💡 Predict apartment prices in Bishkek using <b>CatBoost</b>, <b>Decision Tree</b>, and <b>Linear Regression</b>.<br>📊 Each prediction includes a ±2σ and 95% confidence interval.")
+    gr.Markdown("""
+    <h1 style="text-align:center; font-size:32px;">🏠 <strong>Real Estate Price Estimator — Bishkek</strong></h1>
+    <p style="text-align:center; font-size:18px;">
+        📍 Predict apartment prices using <strong>CatBoost</strong>, <strong>Decision Tree</strong>, and <strong>Linear Regression</strong>.<br>
+        Each prediction includes <span style='color:red;'>±2σ</span> range and <span style='color:#1F7A8C;'>95% confidence interval</span>.
+    </p>
+    """)
 
     with gr.Row():
         with gr.Column():
@@ -172,15 +134,51 @@ with gr.Blocks(css="""
             button = gr.Button("Predict")
 
         with gr.Column():
-            cat_text = gr.Textbox(label="CatBoost Prediction + CI")
-            dt_text = gr.Textbox(label="Decision Tree Prediction + CI")
-            lr_text = gr.Textbox(label="Linear Regression Prediction + CI")
+            cat_md = gr.HTML()
+            dt_md = gr.HTML()
+            lr_md = gr.HTML()
             plot = gr.Plot(label="Prediction Comparison")
 
+    def predict_price_ui(lat, lon, heating, condition, series, building_type, doc_quality, rooms, total_area, floor, ceiling_height, build_year):
+        try:
+            df = pd.DataFrame({
+                "lat": [lat],
+                "lon": [lon],
+                "heating": [heating],
+                "condition": [condition],
+                "series": [series],
+                "building_type": [building_type],
+                "doc_quality": [doc_quality],
+                "rooms": [rooms],
+                "total_area": [total_area],
+                "floor": [floor],
+                "ceiling_height": [ceiling_height],
+                "build_year": [build_year]
+            })
+
+            coords_scaled = scaler.transform(df[['lat', 'lon']])
+            df["geo_cluster"] = approximate_predict(clusterer, coords_scaled)[0]
+            df = create_other_features(df)
+
+            cat_result = get_confidence_interval_log_model_catboost(df, X_train, y_train_log, catboost_model, categorical)
+            dt_result = get_confidence_interval_log_model_sklearn(df, X_train, y_train_log, dt_model, preprocessor)
+            lr_result = get_confidence_interval_log_model_sklearn(df, X_train, y_train_log, lr_model, preprocessor)
+
+            cat_html = format_result("📦 CatBoost", cat_result["prediction"], cat_result["interval_2sigma"], cat_result["interval_confidence"])
+            dt_html = format_result("🌿 Decision Tree", dt_result["prediction"], dt_result["interval_2sigma"], dt_result["interval_confidence"])
+            lr_html = format_result("📊 Linear Regression", lr_result["prediction"], lr_result["interval_2sigma"], lr_result["interval_confidence"])
+
+            fig = make_plot(cat_result['prediction'], dt_result['prediction'], lr_result['prediction'])
+            return cat_html, dt_html, lr_html, fig
+        except Exception as e:
+            import traceback
+            return f"<pre style='color:red;'>❌ Error:\n{traceback.format_exc()}</pre>", "", "", None
+
     button.click(
-        fn=predict_price,
+        fn=predict_price_ui,
         inputs=[lat, lon, heating, condition, series, building_type, doc_quality, rooms, total_area, floor, ceiling_height, build_year],
-        outputs=[cat_text, dt_text, lr_text, plot]
+        outputs=[cat_md, dt_md, lr_md, plot]
     )
 
-demo.launch()
+if __name__ == "__main__":
+    demo.launch()
