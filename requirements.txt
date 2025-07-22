@@ -5,3 +5,4 @@ catboost
 hdbscan
 gradio==4.44.1
 joblib
+scipy
